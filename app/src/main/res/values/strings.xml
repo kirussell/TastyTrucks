@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TastyTrucks</string>
     <string name="title_activity_map">Map</string>
+    <string name="search_bar_hint">Enter place to find trucks</string>
 </resources>
