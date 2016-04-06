@@ -2,6 +2,8 @@ package com.kirussell.tastytrucks.api;
 
 import com.kirussell.tastytrucks.api.data.TruckData;
 
+import retrofit2.Call;
+
 /**
  * Created by russellkim on 05/04/16.
  */
@@ -14,5 +16,5 @@ public interface TrucksDataService {
      * @param distanceInMeters radius of circle area
      * @return trucks data within area
      */
-    TruckData[] getTrucks(double latitude, double longitude, long distanceInMeters);
+    Call<TruckData[]> getTrucks(double latitude, double longitude, long distanceInMeters);
 }

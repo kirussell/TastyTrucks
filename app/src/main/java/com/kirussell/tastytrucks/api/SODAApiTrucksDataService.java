@@ -2,6 +2,7 @@ package com.kirussell.tastytrucks.api;
 
 import com.kirussell.tastytrucks.api.data.TruckData;
 
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
@@ -10,13 +11,10 @@ import retrofit2.http.Query;
  * Uses Socrata Open Data API
  * Delivers data about Foods Trucks (https://dev.socrata.com/foundry/data.sfgov.org/6a9r-agq8)
  */
-interface SODAApiTrucksDataService extends TrucksDataService {
+interface SODAApiTrucksDataService {
 
     String API_ENDPOINT = "https://data.sfgov.org";
 
-    @Override
-    @GET("/resource/6a9r-agq8.json?$where=within_circle(incident_location, {latitude}, {longitude}, {distance})")
-    TruckData[] getTrucks(@Query("latitude")  double latitude,
-                          @Query("longitude") double longitude,
-                          @Query("distance")  long distanceInMeters);
+    @GET("/resource/6a9r-agq8.json")
+    Call<TruckData[]> getTrucks(@Query("$where")  String query);
 }
