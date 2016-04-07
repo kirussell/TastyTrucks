@@ -2,6 +2,8 @@ package com.kirussell.tastytrucks.location;
 
 import android.content.Context;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -19,7 +21,19 @@ public class GoogleLocationModule {
     }
 
     @Provides
-    public GoogleLocationProvider providesLocationProvider() {
-        return new GoogleLocationProvider(context);
+    @Singleton
+    public GoogleApiClientHost provideGoogleApiClient() {
+        return new GoogleApiClientHost(context);
     }
+
+    @Provides
+    public LocationProvider providesLocationProvider(GoogleApiClientHost googleApiClientHost) {
+        return new GoogleLocationProvider(googleApiClientHost);
+    }
+
+    @Provides
+    public PlacesProvider providePlacesProvider(GoogleApiClientHost googleApiClientHost) {
+        return new GooglePlacesProvider(googleApiClientHost);
+    }
+
 }
