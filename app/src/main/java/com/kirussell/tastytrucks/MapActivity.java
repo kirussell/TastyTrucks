@@ -4,10 +4,11 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
-import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,31 +21,25 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.kirussell.tastytrucks.api.TrucksDataService;
 import com.kirussell.tastytrucks.api.data.TruckData;
 import com.kirussell.tastytrucks.databinding.ActivityMapBinding;
-import com.kirussell.tastytrucks.location.GoogleLocationProvider;
+import com.kirussell.tastytrucks.location.data.PlacePrediction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, MapScreenView,
+        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
 
     private static final int CIRCLE_AREA_COLOR = Color.argb(30, 0, 153, 204);
+    private static final int REQUEST_INTERNET_PERMISSIONS = 8;
     private static final int REQUEST_MY_LOCATION_PERMISSIONS = 9;
     private static final int SEARCH_RADIUS_METERS = 1000;
 
+    @Inject MapScreenPresenter presenter;
     private GoogleMap mMap;
-    @Inject
-    public TrucksDataService dataService;
-    @Inject
-    public GoogleLocationProvider locationProvider;
     private Circle circle;
     private Marker placeMarker;
     private List<Marker> trucksMarkers = new ArrayList<>();
@@ -53,11 +48,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{
+                            Manifest.permission.INTERNET,
+                    }, REQUEST_INTERNET_PERMISSIONS
+            );
+        }
         TastyTrucksApp.from(this).getApiComponent().inject(this);
+        presenter.onAttach(this);
         ActivityMapBinding activityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map);
-        initToolbar(activityMapBinding);
+        initSearchBar(activityMapBinding);
         initMap();
         truckMarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.truck_marker);
+    }
+
+    private void initSearchBar(ActivityMapBinding activityMapBinding) {
+        activityMapBinding.searchbar.setAdapter(presenter.getPlacesAutocompleteAdapter());
+        activityMapBinding.searchbar.setThreshold(2);
+        activityMapBinding.searchbar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object item = parent.getAdapter().getItem(position);
+                if (item instanceof PlacePrediction) {
+                    presenter.onPlacePredictionSelected((PlacePrediction) item);
+                }
+            }
+        });
     }
 
     private void initMap() {
@@ -67,30 +85,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
-    private void initToolbar(ActivityMapBinding activityMapBinding) {
-        setSupportActionBar(activityMapBinding.toolbar);
-        activityMapBinding.toolbar.setTitle("");
-    }
-
     @Override
-    protected void onStart() {
-        locationProvider.onStart();
-        super.onStart();
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDetach(this);
     }
 
-    @Override
-    protected void onStop() {
-        locationProvider.onStop();
-        super.onStop();
-    }
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -105,55 +105,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         } else {
             mMap.setMyLocationEnabled(true);
         }
-        LatLng sf = new LatLng(37.7754427, -122.4203914);
-        moveTo(sf);
-        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-            @Override
-            public boolean onMyLocationButtonClick() {
-                Location myLocation = locationProvider.getLastLocation();
-                moveTo(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()));
-                return false;
-            }
-        });
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                moveTo(latLng);
-            }
-        });
+        presenter.setInitialLocation();
+        mMap.setOnMyLocationButtonClickListener(this);
+        mMap.setOnMapClickListener(this);
     }
 
-    private void moveTo(LatLng sf) {
+    @Override
+    public void moveTo(LatLng latLng) {
         if (mMap.getCameraPosition().zoom < 12f) {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sf, 14f));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f));
         } else {
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(sf));
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
         }
-        updatePlaceMarkerAndCircle(sf);
-        requestTrucksNear(sf.latitude, sf.longitude);
+        updatePlaceMarkerAndCircle(latLng);
     }
 
-    private void requestTrucksNear(double latitude, double longitude) {
-        dataService.getTrucks(latitude, longitude, SEARCH_RADIUS_METERS).enqueue(new Callback<TruckData[]>() {
-            @Override
-            public void onResponse(Call<TruckData[]> call, Response<TruckData[]> response) {
-                displayTrucks(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<TruckData[]> call, Throwable t) {
-            }
-        });
-    }
-
-    private void displayTrucks(TruckData[] trucks) {
+    @Override
+    public void displayTrucks(TruckData[] trucks) {
         for (Marker marker : trucksMarkers) {
             marker.remove();
         }
         trucksMarkers.clear();
         if (trucks != null) {
             for (TruckData truck : trucks) {
-                trucksMarkers.add(mMap.addMarker(new MarkerOptions().position(truck.getLatLng()).icon(truckMarkerIcon)));
+                trucksMarkers.add(mMap.addMarker(
+                        new MarkerOptions()
+                                .position(truck.getLatLng()).icon(truckMarkerIcon)
+                                .title(truck.getTitle())
+                                .snippet(truck.getInfo())
+                ));
             }
         }
     }
@@ -176,6 +156,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     @Override
+    public boolean onMyLocationButtonClick() {
+        presenter.onMyLocationClicked();
+        return false;
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_MY_LOCATION_PERMISSIONS) {
@@ -187,6 +173,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 //noinspection ResourceType
                 mMap.setMyLocationEnabled(true);
             }
+        } else if (requestCode == REQUEST_INTERNET_PERMISSIONS) {
+            if (permissions.length == 1 &&
+                    permissions[0].equals(Manifest.permission.INTERNET) &&
+                    grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                finish();
+            }
         }
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        presenter.onMapClicked(latLng);
+    }
+
+    public interface Handlers {
     }
 }

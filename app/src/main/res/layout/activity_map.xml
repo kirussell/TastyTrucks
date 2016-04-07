@@ -1,10 +1,9 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <variable
-            name="data"
-            type="com.kirussell.tastytrucks.MapActivity"/>
+            name="handlers"
+            type="com.kirussell.tastytrucks.MapActivity.Handlers"/>
     </data>
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,7 +16,7 @@
             android:layout_height="match_parent"
             tools:context="com.kirussell.tastytrucks.MapActivity" />
 
-        <android.support.v7.widget.Toolbar
+        <FrameLayout
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -27,20 +26,21 @@
             android:layout_marginRight="64dp"
             android:layout_marginBottom="8dp"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            map:titleTextColor="@android:color/white" >
+            android:paddingRight="8dp">
 
             <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <android.support.v7.widget.AppCompatEditText
+                <android.support.v7.widget.AppCompatAutoCompleteTextView
                     android:id="@+id/searchbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/search_bar_hint"
                     android:singleLine="true" />
+
             </LinearLayout>
-        </android.support.v7.widget.Toolbar>
+        </FrameLayout>
     </FrameLayout>
 </layout>
