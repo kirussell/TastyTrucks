@@ -203,12 +203,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_MY_LOCATION_PERMISSIONS) {
-            if (permissions.length == 2 &&
-                    permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION) &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                    permissions[1].equals(Manifest.permission.ACCESS_COARSE_LOCATION) &&
-                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                //noinspection ResourceType
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 mMap.setMyLocationEnabled(true);
             }
         } else if (requestCode == REQUEST_INTERNET_PERMISSIONS) {

@@ -1,6 +1,7 @@
 package com.kirussell.tastytrucks.location;
 
 import android.location.Location;
+import android.util.Log;
 
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
@@ -30,8 +31,12 @@ public class GoogleLocationProvider implements LocationProvider {
 
     @Override
     public LatLng getLastLocation() {
-        //noinspection ResourceType
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClientHost.getGoogleApiClient());
+        Location location = null;
+        try {
+            location = LocationServices.FusedLocationApi.getLastLocation(googleApiClientHost.getGoogleApiClient());
+        } catch (SecurityException e) {
+            Log.e("GoogleLocationProvider", "Can not obtain last location: " + e.toString());
+        }
         if (location != null) {
             lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
         }
