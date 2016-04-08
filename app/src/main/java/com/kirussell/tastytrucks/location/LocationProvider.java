@@ -1,6 +1,6 @@
 package com.kirussell.tastytrucks.location;
 
-import android.location.Location;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by russellkim on 08/04/16.
@@ -10,5 +10,5 @@ public interface LocationProvider {
 
     void onStart();
     void onStop();
-    Location getLastLocation();
+    LatLng getLastLocation();
 }

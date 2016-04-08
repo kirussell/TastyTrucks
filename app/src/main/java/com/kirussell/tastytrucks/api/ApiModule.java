@@ -37,12 +37,7 @@ public class ApiModule {
         return new TrucksDataService() {
             @Override
             public Call<TruckData[]> getTrucks(double latitude, double longitude, long distanceInMeters) {
-                String query = String.format(
-                        Locale.ENGLISH,
-                        "within_circle(location, %f, %f, %d)",
-                        latitude, longitude, distanceInMeters
-                );
-                return sodaApiTrucksDataService.getTrucks(query);
+                return sodaApiTrucksDataService.getTrucks(compileWhereParameter(latitude, longitude, distanceInMeters));
             }
         };
     }
@@ -61,5 +56,13 @@ public class ApiModule {
             }
         }).build();
         return okHttpClient;
+    }
+
+    protected String compileWhereParameter(double latitude, double longitude, long distanceInMeters) {
+        return String.format(
+                Locale.ENGLISH,
+                "within_circle(location, %f, %f, %d)",
+                latitude, longitude, distanceInMeters
+        );
     }
 }

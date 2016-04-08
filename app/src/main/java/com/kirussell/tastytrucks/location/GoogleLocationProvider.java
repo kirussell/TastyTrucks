@@ -3,7 +3,7 @@ package com.kirussell.tastytrucks.location;
 import android.location.Location;
 
 import com.google.android.gms.location.LocationServices;
-
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by russellkim on 06/04/16.
@@ -12,7 +12,7 @@ import com.google.android.gms.location.LocationServices;
 public class GoogleLocationProvider implements LocationProvider {
 
     private final GoogleApiClientHost googleApiClientHost;
-    private Location lastLocation;
+    private LatLng lastLocation;
 
     GoogleLocationProvider(GoogleApiClientHost googleApiClientHost) {
         this.googleApiClientHost = googleApiClientHost;
@@ -29,11 +29,11 @@ public class GoogleLocationProvider implements LocationProvider {
     }
 
     @Override
-    public Location getLastLocation() {
+    public LatLng getLastLocation() {
         //noinspection ResourceType
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClientHost.getGoogleApiClient());
         if (location != null) {
-            lastLocation = location;
+            lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
         }
         return lastLocation;
     }
