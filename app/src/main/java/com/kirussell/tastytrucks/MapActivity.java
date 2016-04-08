@@ -39,6 +39,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
 
     private static final int CIRCLE_AREA_COLOR = Color.argb(30, 0, 153, 204);
+    private static final int CIRCLE_STROKE_COLOR = Color.argb(90, 0, 153, 204);
     private static final int REQUEST_GOOGLE_PLAY_SERVICES = 7;
     private static final int REQUEST_INTERNET_PERMISSIONS = 8;
     private static final int REQUEST_MY_LOCATION_PERMISSIONS = 9;
@@ -182,7 +183,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         circle = mMap.addCircle(
                 new CircleOptions()
                         .center(latLng)
-                        .strokeWidth(0)
+                        .strokeWidth(3)
+                        .strokeColor(CIRCLE_STROKE_COLOR)
                         .fillColor(CIRCLE_AREA_COLOR)
                         .radius(SEARCH_RADIUS_METERS)
         );
