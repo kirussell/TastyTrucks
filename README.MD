@@ -1,4 +1,4 @@
-TastyTrucks
+TastyTrucks [![Build Status](https://travis-ci.org/kirussell/TastyTrucks.svg?branch=master)](https://travis-ci.org/kirussell/TastyTrucks)
 ---
 Simple app that helps you to find trucks with tasty food near you or near place you are interested in
 This is an Android app with UI that contains:
@@ -26,8 +26,10 @@ Google maps not working with devices without Google Play Services,
 so in case of distribution outside the Google Play we will need to replace map view
 (for example, with https://github.com/airbnb/AirMapView)
 
-Also this modularity makes code more testable, parts can be mocked and isolated
-(TODO tests)
+Also this modularity makes code more testable, parts can be mocked and isolated.
+Tests has to be executed periodically - Travis CI is one of the best/easiest options for public github repo.
+
+Google play services availability check is made in MapActivity. It could be the part of presenter, but in perspective Map can be replaced to get rid of google play services dependency.
 
 TODO
 Trade-offs you might have made, anything you left out, or what you might do differently if you were to spend additional time on the project.
