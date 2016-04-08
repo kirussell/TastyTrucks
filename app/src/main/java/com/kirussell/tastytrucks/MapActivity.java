@@ -14,8 +14,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -43,7 +41,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Circle circle;
     private Marker placeMarker;
     private List<Marker> trucksMarkers = new ArrayList<>();
-    private BitmapDescriptor truckMarkerIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +54,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             );
         }
         TastyTrucksApp.from(this).getApiComponent().inject(this);
-        presenter.onAttach(this);
         ActivityMapBinding activityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map);
         initSearchBar(activityMapBinding);
         initMap();
-        truckMarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.truck_marker);
     }
 
     private void initSearchBar(ActivityMapBinding activityMapBinding) {
@@ -86,8 +81,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStart() {
+        super.onStart();
+        presenter.onAttach(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         presenter.onDetach(this);
     }
 
@@ -130,7 +131,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             for (TruckData truck : trucks) {
                 trucksMarkers.add(mMap.addMarker(
                         new MarkerOptions()
-                                .position(truck.getLatLng()).icon(truckMarkerIcon)
+                                .position(truck.getLatLng()).icon(presenter.getTruckMarkerIcon())
                                 .title(truck.getTitle())
                                 .snippet(truck.getInfo())
                 ));

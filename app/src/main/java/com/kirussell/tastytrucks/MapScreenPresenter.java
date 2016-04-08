@@ -4,6 +4,8 @@ import android.location.Location;
 import android.text.TextUtils;
 
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.kirussell.tastytrucks.api.TrucksDataService;
 import com.kirussell.tastytrucks.api.data.TruckData;
@@ -35,6 +37,7 @@ public class MapScreenPresenter {
     private MapScreenView view = EMPTY_VIEW;
     private Executor executor = Executors.newSingleThreadExecutor();
     private PlacesAutocompleteAdapter placesAutocompleteAdapter;
+    private BitmapDescriptor truckMarkerIcon;
 
     @Inject
     public MapScreenPresenter(TrucksDataService dataService, LocationProvider locationProvider, PlacesProvider placesProvider) {
@@ -48,6 +51,9 @@ public class MapScreenPresenter {
         this.view = view;
         locationProvider.onStart();
         placesProvider.onStart();
+        if (truckMarkerIcon == null) {
+            truckMarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.truck_marker);
+        }
     }
 
     public void onDetach(MapScreenView view) {
@@ -110,6 +116,10 @@ public class MapScreenPresenter {
 
     public PlacesAutocompleteAdapter getPlacesAutocompleteAdapter() {
         return placesAutocompleteAdapter;
+    }
+
+    public BitmapDescriptor getTruckMarkerIcon() {
+        return truckMarkerIcon;
     }
 
     private static final MapScreenView EMPTY_VIEW = new MapScreenView() {
