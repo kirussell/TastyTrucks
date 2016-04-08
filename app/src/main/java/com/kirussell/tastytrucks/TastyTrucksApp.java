@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.kirussell.tastytrucks.api.ApiModule;
 import com.kirussell.tastytrucks.location.GoogleLocationModule;
-import com.kirussell.tastytrucks.map.MapActivity;
 import com.kirussell.tastytrucks.map.MapScreenPresenter;
 
 import javax.inject.Singleton;

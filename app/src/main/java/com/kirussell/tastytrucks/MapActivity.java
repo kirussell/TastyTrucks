@@ -1,6 +1,8 @@
-package com.kirussell.tastytrucks.map;
+package com.kirussell.tastytrucks;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -11,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,11 +24,11 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.kirussell.tastytrucks.R;
-import com.kirussell.tastytrucks.TastyTrucksApp;
 import com.kirussell.tastytrucks.api.data.TruckData;
 import com.kirussell.tastytrucks.databinding.ActivityMapBinding;
 import com.kirussell.tastytrucks.location.data.PlacePrediction;
+import com.kirussell.tastytrucks.map.MapScreenPresenter;
+import com.kirussell.tastytrucks.map.MapScreenView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
 
     private static final int CIRCLE_AREA_COLOR = Color.argb(30, 0, 153, 204);
+    private static final int REQUEST_GOOGLE_PLAY_SERVICES = 7;
     private static final int REQUEST_INTERNET_PERMISSIONS = 8;
     private static final int REQUEST_MY_LOCATION_PERMISSIONS = 9;
     private static final int SEARCH_RADIUS_METERS = 1000;
@@ -48,6 +53,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TastyTrucksApp.from(this).getApiComponent().inject(this);
+        if (checkGooglePlayServicesAvailable()) {
+            onInit();
+        }
+    }
+
+    private boolean checkGooglePlayServicesAvailable() {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int googlePlayServicesAvailable = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (googlePlayServicesAvailable != ConnectionResult.SUCCESS) {
+            Dialog errorDialog = googleApiAvailability.getErrorDialog(this, googlePlayServicesAvailable, REQUEST_GOOGLE_PLAY_SERVICES);
+            errorDialog.show();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_GOOGLE_PLAY_SERVICES) {
+            if (checkGooglePlayServicesAvailable()) {
+                onInit();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void onInit() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this,
@@ -56,7 +90,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }, REQUEST_INTERNET_PERMISSIONS
             );
         }
-        TastyTrucksApp.from(this).getApiComponent().inject(this);
         ActivityMapBinding activityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map);
         initSearchBar(activityMapBinding);
         initMap();
