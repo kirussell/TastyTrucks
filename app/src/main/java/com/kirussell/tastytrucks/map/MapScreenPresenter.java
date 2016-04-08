@@ -1,7 +1,7 @@
 package com.kirussell.tastytrucks.map;
 
-import android.location.Location;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -53,7 +53,11 @@ public class MapScreenPresenter {
         locationProvider.onStart();
         placesProvider.onStart();
         if (truckMarkerIcon == null) {
-            truckMarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.truck_marker);
+            try {
+                truckMarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.truck_marker);
+            } catch(NullPointerException e) {
+                Log.e("MapScreenPresenter", "Cannot create truck marker:" + e.toString());
+            }
         }
     }
 
@@ -69,8 +73,7 @@ public class MapScreenPresenter {
     }
 
     public void onMyLocationClicked() {
-        Location myLocation = locationProvider.getLastLocation();
-        moveTo(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()));
+        moveTo(locationProvider.getLastLocation());
     }
 
     public void onPlacePredictionSelected(PlacePrediction place) {
@@ -111,6 +114,7 @@ public class MapScreenPresenter {
 
             @Override
             public void onFailure(Call<TruckData[]> call, Throwable t) {
+                Log.d("MapScreenPresenter", "Failed to get trucks data");
             }
         });
     }
