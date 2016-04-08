@@ -1,9 +1,10 @@
-package com.kirussell.tastytrucks;
+package com.kirussell.tastytrucks.map;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.kirussell.tastytrucks.R;
+import com.kirussell.tastytrucks.TastyTrucksApp;
 import com.kirussell.tastytrucks.api.data.TruckData;
 import com.kirussell.tastytrucks.databinding.ActivityMapBinding;
 import com.kirussell.tastytrucks.location.data.PlacePrediction;
@@ -163,7 +166,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_MY_LOCATION_PERMISSIONS) {
             if (permissions.length == 2 &&

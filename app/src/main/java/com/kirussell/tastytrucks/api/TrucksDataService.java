@@ -6,6 +6,7 @@ import retrofit2.Call;
 
 /**
  * Created by russellkim on 05/04/16.
+ * Service that provides data about food trucks
  */
 public interface TrucksDataService {
 

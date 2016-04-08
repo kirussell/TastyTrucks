@@ -1,4 +1,4 @@
-package com.kirussell.tastytrucks;
+package com.kirussell.tastytrucks.map;
 
 import android.location.Location;
 import android.text.TextUtils;
@@ -7,6 +7,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.kirussell.tastytrucks.R;
 import com.kirussell.tastytrucks.api.TrucksDataService;
 import com.kirussell.tastytrucks.api.data.TruckData;
 import com.kirussell.tastytrucks.location.LocationProvider;

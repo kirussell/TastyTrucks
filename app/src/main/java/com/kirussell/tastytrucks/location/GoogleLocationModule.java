@@ -9,7 +9,7 @@ import dagger.Provides;
 
 /**
  * Created by russellkim on 06/04/16.
- *
+ * 
  */
 @Module
 public class GoogleLocationModule {

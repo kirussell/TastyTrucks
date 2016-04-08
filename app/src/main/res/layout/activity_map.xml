@@ -3,7 +3,7 @@
     <data>
         <variable
             name="handlers"
-            type="com.kirussell.tastytrucks.MapActivity.Handlers"/>
+            type="com.kirussell.tastytrucks.map.MapActivity.Handlers"/>
     </data>
     <FrameLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="com.kirussell.tastytrucks.MapActivity" />
+            tools:context=".map.MapActivity" />
 
         <FrameLayout
             android:id="@+id/toolbar"

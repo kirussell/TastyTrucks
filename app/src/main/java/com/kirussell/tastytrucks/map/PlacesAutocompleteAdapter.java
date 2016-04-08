@@ -1,4 +1,4 @@
-package com.kirussell.tastytrucks;
+package com.kirussell.tastytrucks.map;
 
 import android.graphics.Typeface;
 import android.text.style.CharacterStyle;

@@ -1,4 +1,4 @@
-package com.kirussell.tastytrucks;
+package com.kirussell.tastytrucks.map;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.kirussell.tastytrucks.api.data.TruckData;

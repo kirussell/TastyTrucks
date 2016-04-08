@@ -1,5 +1,6 @@
 package com.kirussell.tastytrucks.location;
 
+import android.support.annotation.NonNull;
 import android.text.style.CharacterStyle;
 
 import com.google.android.gms.common.api.PendingResult;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by russellkim on 07/04/16.
+ * Google places api
  */
 public class GooglePlacesProvider implements PlacesProvider {
 
@@ -46,6 +48,7 @@ public class GooglePlacesProvider implements PlacesProvider {
      * @return list of places for query
      */
     @Override
+    @NonNull
     public List<PlacePrediction> getPlaces(String query, CharacterStyle primary, CharacterStyle secondary) {
         PendingResult<AutocompletePredictionBuffer> result = Places.GeoDataApi.getAutocompletePredictions(
                 googleApiClientHost.getGoogleApiClient(), query,

@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * Created by russellkim on 08/04/16.
+ * Provides places api
  */
 public interface PlacesProvider {
 
@@ -32,5 +33,5 @@ public interface PlacesProvider {
 
     @Nullable
     @WorkerThread
-    public Place getPlaceById(String id);
+    Place getPlaceById(String id);
 }

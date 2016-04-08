@@ -7,7 +7,7 @@ import com.google.android.gms.location.LocationServices;
 
 /**
  * Created by russellkim on 06/04/16.
- * Provider of last location
+ * Google api location provider
  */
 public class GoogleLocationProvider implements LocationProvider {
 
