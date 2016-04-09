@@ -13,6 +13,7 @@ import com.kirussell.tastytrucks.api.data.TruckData;
 import com.kirussell.tastytrucks.location.LocationProvider;
 import com.kirussell.tastytrucks.location.PlacesProvider;
 import com.kirussell.tastytrucks.location.data.PlacePrediction;
+import com.kirussell.tastytrucks.utils.SpanUtil;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -32,13 +33,14 @@ public class MapScreenPresenter {
     public static final LatLng UBER_HQ = new LatLng(37.7754427, -122.4203914);
     private static final int SEARCH_RADIUS_METERS = 1000;
 
-    private TrucksDataService dataService;
-    private LocationProvider locationProvider;
-    private PlacesProvider placesProvider;
+    private final TrucksDataService dataService;
+    private final LocationProvider locationProvider;
+    private final PlacesProvider placesProvider;
+    private final PlacesAutocompleteAdapter placesAutocompleteAdapter;
+    private final MapViewHandlers mapViewHandlers;
     private MapScreenView view = EMPTY_VIEW;
-    private Executor executor = Executors.newSingleThreadExecutor();
-    private PlacesAutocompleteAdapter placesAutocompleteAdapter;
     private BitmapDescriptor truckMarkerIcon;
+    private Executor executor = Executors.newSingleThreadExecutor();
 
     @Inject
     public MapScreenPresenter(TrucksDataService dataService, LocationProvider locationProvider, PlacesProvider placesProvider) {
@@ -46,6 +48,7 @@ public class MapScreenPresenter {
         this.locationProvider = locationProvider;
         this.placesProvider = placesProvider;
         this.placesAutocompleteAdapter = new PlacesAutocompleteAdapter(this.placesProvider);
+        this.mapViewHandlers = new MapViewHandlers();
     }
 
     public void onAttach(MapScreenView view) {
@@ -101,6 +104,7 @@ public class MapScreenPresenter {
     }
 
     private void moveTo(LatLng latLng) {
+        mapViewHandlers.truckInfoShown.set(false);
         view.moveTo(latLng);
         requestTrucksNear(latLng);
     }
@@ -119,8 +123,32 @@ public class MapScreenPresenter {
         });
     }
 
+    public void onMarkerClicked(TruckData truck) {
+        mapViewHandlers.truckInfoShown.set(true);
+        mapViewHandlers.truckInfo.set(
+                SpanUtil.normal(
+                        SpanUtil.bold(truck.getTitle()), "\n",
+                        truck.getLocationDescription(), "\n",
+                        truck.getDaysHours(), "\n",
+                        truck.getFoodItems()
+                )
+        );
+    }
+
+    public void onPlaceMarkerClicked() {
+        mapViewHandlers.truckInfoShown.set(false);
+    }
+
+    public void onHideMarkerInfoWindow() {
+        mapViewHandlers.truckInfoShown.set(false);
+    }
+
     public PlacesAutocompleteAdapter getPlacesAutocompleteAdapter() {
         return placesAutocompleteAdapter;
+    }
+
+    public MapViewHandlers getMapViewHandlers() {
+        return mapViewHandlers;
     }
 
     public BitmapDescriptor getTruckMarkerIcon() {

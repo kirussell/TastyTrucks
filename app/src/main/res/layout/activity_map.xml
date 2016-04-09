@@ -2,46 +2,77 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="handlers"
-            type="com.kirussell.tastytrucks.MapActivity.Handlers"/>
+            type="com.kirussell.tastytrucks.map.MapViewHandlers"/>
+
+        <import type="android.view.View"/>
     </data>
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
 
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".MapActivity" />
+            tools:context=".MapActivity"/>
 
         <FrameLayout
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@drawable/white_rounded_rect"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="64dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/white_rounded_rect"
             android:paddingLeft="8dp"
             android:paddingRight="8dp">
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <android.support.v7.widget.AppCompatAutoCompleteTextView
                     android:id="@+id/searchbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/search_bar_hint"
-                    android:singleLine="true" />
+                    android:singleLine="true"/>
 
             </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="128dp"
+            android:layout_gravity="bottom"
+            android:layout_margin="8dp"
+            android:background="@drawable/white_rounded_rect"
+            android:padding="16dp"
+            android:maxWidth="382dp"
+            android:visibility="@{handlers.truckInfoShown ? View.VISIBLE : View.GONE}">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:overScrollMode="never">
+
+                <TextView
+                    android:id="@+id/truck_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{handlers.truckInfo}"
+                    />
+            </ScrollView>
         </FrameLayout>
     </FrameLayout>
 </layout>

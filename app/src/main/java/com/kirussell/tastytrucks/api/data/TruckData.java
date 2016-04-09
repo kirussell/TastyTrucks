@@ -1,5 +1,7 @@
 package com.kirussell.tastytrucks.api.data;
 
+import android.text.TextUtils;
+
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -8,8 +10,10 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class TruckData {
     String address;
+    String locationdescription;
     String applicant;
     String fooditems;
+    String dayshours;
     double latitude;
     double longitude;
 
@@ -21,8 +25,19 @@ public class TruckData {
         return applicant;
     }
 
-    public String getInfo() {
-        return address + " " + fooditems;
+    public String getFoodItems() {
+        return TextUtils.join(",", fooditems.split(":"));
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public String getLocationDescription() {
+        return locationdescription;
+    }
+
+    public String getDaysHours() {
+        return dayshours;
+    }
 }

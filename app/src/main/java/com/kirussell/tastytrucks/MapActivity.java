@@ -30,13 +30,12 @@ import com.kirussell.tastytrucks.location.data.PlacePrediction;
 import com.kirussell.tastytrucks.map.MapScreenPresenter;
 import com.kirussell.tastytrucks.map.MapScreenView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, MapScreenView,
-        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener {
+        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
 
     private static final int CIRCLE_AREA_COLOR = Color.argb(30, 0, 153, 204);
     private static final int CIRCLE_STROKE_COLOR = Color.argb(90, 0, 153, 204);
@@ -46,10 +45,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int SEARCH_RADIUS_METERS = 1000;
 
     @Inject MapScreenPresenter presenter;
-    private GoogleMap mMap;
+    private GoogleMap map;
     private Circle circle;
     private Marker placeMarker;
-    private List<Marker> trucksMarkers = new ArrayList<>();
+    private HashMap<Marker, TruckData> trucksMarkers = new HashMap<>();
+    private Marker lastClickedMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +92,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             );
         }
         ActivityMapBinding activityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map);
+        activityMapBinding.setHandlers(presenter.getMapViewHandlers());
         initSearchBar(activityMapBinding);
         initMap();
     }
@@ -131,7 +132,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        map = googleMap;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this,
@@ -141,46 +142,51 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }, REQUEST_MY_LOCATION_PERMISSIONS
             );
         } else {
-            mMap.setMyLocationEnabled(true);
+            map.setMyLocationEnabled(true);
         }
         presenter.setInitialLocation();
-        mMap.setOnMyLocationButtonClickListener(this);
-        mMap.setOnMapClickListener(this);
+        map.setOnMyLocationButtonClickListener(this);
+        map.setOnMapClickListener(this);
+        map.setOnMarkerClickListener(this);
     }
 
     @Override
     public void moveTo(LatLng latLng) {
-        if (mMap.getCameraPosition().zoom < 12f) {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f));
+        if (map.getCameraPosition().zoom < 12f) {
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.5f));
         } else {
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
         }
         updatePlaceMarkerAndCircle(latLng);
+        clearTrucksMarkers();
     }
 
     @Override
     public void displayTrucks(TruckData[] trucks) {
-        for (Marker marker : trucksMarkers) {
-            marker.remove();
-        }
-        trucksMarkers.clear();
         if (trucks != null) {
             for (TruckData truck : trucks) {
-                trucksMarkers.add(mMap.addMarker(
+                trucksMarkers.put(map.addMarker(
                         new MarkerOptions()
                                 .position(truck.getLatLng()).icon(presenter.getTruckMarkerIcon())
                                 .title(truck.getTitle())
-                                .snippet(truck.getInfo())
-                ));
+                                .snippet(truck.getAddress())
+                ), truck);
             }
         }
+    }
+
+    private void clearTrucksMarkers() {
+        for (Marker marker : trucksMarkers.keySet()) {
+            marker.remove();
+        }
+        trucksMarkers.clear();
     }
 
     private void updatePlaceMarkerAndCircle(LatLng latLng) {
         if (circle != null) {
             circle.remove();
         }
-        circle = mMap.addCircle(
+        circle = map.addCircle(
                 new CircleOptions()
                         .center(latLng)
                         .strokeWidth(3)
@@ -191,7 +197,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (placeMarker != null) {
             placeMarker.remove();
         }
-        placeMarker = mMap.addMarker(new MarkerOptions().position(latLng));
+        placeMarker = map.addMarker(new MarkerOptions().position(latLng));
     }
 
     @Override
@@ -207,7 +213,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (requestCode == REQUEST_MY_LOCATION_PERMISSIONS) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                mMap.setMyLocationEnabled(true);
+                map.setMyLocationEnabled(true);
             }
         } else if (requestCode == REQUEST_INTERNET_PERMISSIONS) {
             if (permissions.length == 1 &&
@@ -223,6 +229,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         presenter.onMapClicked(latLng);
     }
 
-    public interface Handlers {
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if (marker.equals(placeMarker)) {
+            presenter.onPlaceMarkerClicked();
+        } else {
+            TruckData truckData = trucksMarkers.get(marker);
+            if (truckData != null) {
+                presenter.onMarkerClicked(truckData);
+            }
+            lastClickedMarker = marker;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (lastClickedMarker.isInfoWindowShown()) {
+            presenter.onHideMarkerInfoWindow();
+            lastClickedMarker.hideInfoWindow();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
