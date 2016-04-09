@@ -248,7 +248,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
-        if (lastClickedMarker.isInfoWindowShown()) {
+        if (lastClickedMarker != null && lastClickedMarker.isInfoWindowShown()) {
             presenter.onHideMarkerInfoWindow();
             lastClickedMarker.hideInfoWindow();
         } else {
