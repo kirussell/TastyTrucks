@@ -27,12 +27,18 @@ so in case of distribution outside the Google Play we will need to replace map v
 (for example, with https://github.com/airbnb/AirMapView)
 
 Also this modularity makes code more testable, parts can be mocked and isolated.
-Tests has to be executed periodically - Travis CI is one of the best/easiest options for public github repo.
+Tests has to be executed periodically - Travis CI is configured for public github repo.
 
 Google play services availability check is made in MapActivity. It could be the part of presenter, but in perspective Map can be replaced to get rid of google play services dependency.
 
+Trade-offs, left out
+---
+- Using Google APIs and services for location/places/maps. In perspective app can be installed on devices without google play services. For prototype it is easier and faster to build with google APIs.
+- Search settings will be a good addition. To set search radius, for example, or filter search by food items.
+- Mocking static methods from android (PowerMock, Robolectric) instead of code duplication (MyTextUtils).
+
+
 TODO
-Trade-offs you might have made, anything you left out, or what you might do differently if you were to spend additional time on the project.
 Link to other code you're particularly proud of.
 Link to your resume or public profile.
 Link to to the hosted application where applicable.
