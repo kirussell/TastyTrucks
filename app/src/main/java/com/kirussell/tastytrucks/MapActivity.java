@@ -45,11 +45,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int SEARCH_RADIUS_METERS = 1000;
 
     @Inject MapScreenPresenter presenter;
+    @Inject IntroController intro;
     private GoogleMap map;
     private Circle circle;
     private Marker placeMarker;
     private HashMap<Marker, TruckData> trucksMarkers = new HashMap<>();
     private Marker lastClickedMarker;
+    private ActivityMapBinding activityMapBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +93,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }, REQUEST_INTERNET_PERMISSIONS
             );
         }
-        ActivityMapBinding activityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map);
+        activityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map);
         activityMapBinding.setHandlers(presenter.getMapViewHandlers());
         initSearchBar(activityMapBinding);
         initMap();
@@ -122,6 +124,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onStart() {
         super.onStart();
         presenter.onAttach(this);
+        intro.showSearchBarTip(this, activityMapBinding.toolbar, getString(R.string.searchbar_tip));
     }
 
     @Override

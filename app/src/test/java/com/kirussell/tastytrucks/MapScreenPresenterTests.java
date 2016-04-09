@@ -1,6 +1,6 @@
 package com.kirussell.tastytrucks;
 
-import android.text.TextUtils;
+import android.content.SharedPreferences;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -72,6 +72,7 @@ public class MapScreenPresenterTests {
     private PlacesProvider placesApi;
     private MapViewHandlers mapViewHandlers;
     private SpanUtil spanUtil;
+    private IntroController introlController;
 
     @Before
     public void setup() {
@@ -79,10 +80,11 @@ public class MapScreenPresenterTests {
         placesApi = mock(PlacesProvider.class);
         mapViewHandlers = new MapViewHandlers();
         spanUtil = new DummySpanUtil();
+        introlController = new IntroController(mock(SharedPreferences.class));
         presenter = DaggerTastyTrucksApp_AppComponent.builder()
                 .apiModule(testApiModule)
                 .googleLocationModule(new TestLocationModule(locationApi, placesApi))
-                .mapViewModule(new TestMapViewModule(mapViewHandlers, spanUtil))
+                .mapViewModule(new TestMapViewModule(mapViewHandlers, spanUtil, introlController))
                 .build()
                 .mapScreenPresenter();
         mapScreenView = mock(MapScreenView.class);

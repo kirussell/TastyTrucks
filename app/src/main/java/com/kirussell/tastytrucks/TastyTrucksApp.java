@@ -26,10 +26,11 @@ public class TastyTrucksApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Context ctx = getApplicationContext();
         apiComponent = DaggerTastyTrucksApp_AppComponent.builder()
                 .apiModule(new ApiModule(SODAToken))
-                .googleLocationModule(new GoogleLocationModule(getApplicationContext()))
-                .mapViewModule(new MapViewModule())
+                .googleLocationModule(new GoogleLocationModule(ctx))
+                .mapViewModule(new MapViewModule(ctx))
                 .build();
     }
 

@@ -35,11 +35,15 @@ Trade-offs, left out
 ---
 - Using Google APIs and services for location/places/maps. In perspective app can be installed on devices without google play services. For prototype it is easier and faster to build with google APIs.
 - Search settings will be a good addition. To set search radius, for example, or filter search by food items.
+- Currently data requested for SF, so it is better to restrict search with SF bounds or even better to create API to retrieve data for different areas.
+- Truck info card can be implemented with bottom sheets pattern.
 - Mocking static methods from android (PowerMock, Robolectric) instead of code duplication (MyTextUtils).
 
-
+Links
+___
+- Linkedin: https://linkedin.com/in/kirussell
+- Lib for intro Garson: https://github.com/kirussell/Garson
 TODO
 Link to other code you're particularly proud of.
-Link to your resume or public profile.
 Link to to the hosted application where applicable.
 
