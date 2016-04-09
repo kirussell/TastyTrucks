@@ -1,8 +1,7 @@
 package com.kirussell.tastytrucks.api.data;
 
-import android.text.TextUtils;
-
 import com.google.android.gms.maps.model.LatLng;
+import com.kirussell.tastytrucks.utils.MyTextUtils;
 
 /**
  * Created by russellkim on 05/04/16.
@@ -26,7 +25,11 @@ public class TruckData {
     }
 
     public String getFoodItems() {
-        return TextUtils.join(",", fooditems.split(":"));
+        if (MyTextUtils.isEmpty(fooditems)) {
+            return "";
+        } else {
+            return MyTextUtils.join(",", fooditems.split(":"));
+        }
     }
 
     public String getAddress() {

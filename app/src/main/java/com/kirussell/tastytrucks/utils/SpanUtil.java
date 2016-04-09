@@ -5,7 +5,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
-import android.text.style.TypefaceSpan;
 
 public class SpanUtil {
 
@@ -17,7 +16,7 @@ public class SpanUtil {
      * @param tags    the styled span objects to apply to the content
      *                such as android.text.style.StyleSpan
      */
-    private static CharSequence apply(CharSequence[] content, Object... tags) {
+    protected CharSequence apply(CharSequence[] content, Object... tags) {
         SpannableStringBuilder text = new SpannableStringBuilder();
         openTags(text, tags);
         for (CharSequence item : content) {
@@ -34,7 +33,7 @@ public class SpanUtil {
      * Spannable object so that future text appended to the text will have the styling
      * applied to it. Do not call this method directly.
      */
-    private static void openTags(Spannable text, Object[] tags) {
+    private void openTags(Spannable text, Object[] tags) {
         for (Object tag : tags) {
             text.setSpan(tag, 0, 0, Spannable.SPAN_MARK_MARK);
         }
@@ -45,7 +44,7 @@ public class SpanUtil {
      * endpoint-exclusive so that future text appended to the end will not take
      * on the same styling. Do not call this method directly.
      */
-    private static void closeTags(Spannable text, Object[] tags) {
+    private void closeTags(Spannable text, Object[] tags) {
         int len = text.length();
         for (Object tag : tags) {
             if (len > 0) {
@@ -60,11 +59,11 @@ public class SpanUtil {
      * Returns a CharSequence that applies boldface to the concatenation
      * of the specified CharSequence objects.
      */
-    public static CharSequence bold(CharSequence... content) {
+    public CharSequence bold(CharSequence... content) {
         return apply(content, new StyleSpan(Typeface.BOLD));
     }
 
-    public static CharSequence normal(CharSequence... content) {
+    public CharSequence normal(CharSequence... content) {
         return apply(content, new StyleSpan(Typeface.NORMAL));
     }
 }

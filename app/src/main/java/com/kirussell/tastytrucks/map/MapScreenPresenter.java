@@ -38,17 +38,21 @@ public class MapScreenPresenter {
     private final PlacesProvider placesProvider;
     private final PlacesAutocompleteAdapter placesAutocompleteAdapter;
     private final MapViewHandlers mapViewHandlers;
+    private final SpanUtil spanUtil;
     private MapScreenView view = EMPTY_VIEW;
     private BitmapDescriptor truckMarkerIcon;
     private Executor executor = Executors.newSingleThreadExecutor();
 
     @Inject
-    public MapScreenPresenter(TrucksDataService dataService, LocationProvider locationProvider, PlacesProvider placesProvider) {
+    public MapScreenPresenter(TrucksDataService dataService, LocationProvider locationProvider,
+                              PlacesProvider placesProvider, MapViewHandlers mapViewHandlers,
+                              SpanUtil spanUtil) {
         this.dataService = dataService;
         this.locationProvider = locationProvider;
         this.placesProvider = placesProvider;
         this.placesAutocompleteAdapter = new PlacesAutocompleteAdapter(this.placesProvider);
-        this.mapViewHandlers = new MapViewHandlers();
+        this.mapViewHandlers = mapViewHandlers;
+        this.spanUtil = spanUtil;
     }
 
     public void onAttach(MapScreenView view) {
@@ -126,8 +130,8 @@ public class MapScreenPresenter {
     public void onMarkerClicked(TruckData truck) {
         mapViewHandlers.truckInfoShown.set(true);
         mapViewHandlers.truckInfo.set(
-                SpanUtil.normal(
-                        SpanUtil.bold(truck.getTitle()), "\n",
+                spanUtil.normal(
+                        spanUtil.bold(truck.getTitle()), "\n",
                         truck.getLocationDescription(), "\n",
                         truck.getDaysHours(), "\n",
                         truck.getFoodItems()

@@ -6,6 +6,8 @@ import android.content.Context;
 import com.kirussell.tastytrucks.api.ApiModule;
 import com.kirussell.tastytrucks.location.GoogleLocationModule;
 import com.kirussell.tastytrucks.map.MapScreenPresenter;
+import com.kirussell.tastytrucks.map.MapViewHandlers;
+import com.kirussell.tastytrucks.map.MapViewModule;
 
 import javax.inject.Singleton;
 
@@ -27,6 +29,7 @@ public class TastyTrucksApp extends Application {
         apiComponent = DaggerTastyTrucksApp_AppComponent.builder()
                 .apiModule(new ApiModule(SODAToken))
                 .googleLocationModule(new GoogleLocationModule(getApplicationContext()))
+                .mapViewModule(new MapViewModule())
                 .build();
     }
 
@@ -39,7 +42,7 @@ public class TastyTrucksApp extends Application {
     }
 
     @Singleton
-    @Component(modules={ApiModule.class, GoogleLocationModule.class})
+    @Component(modules={ApiModule.class, GoogleLocationModule.class, MapViewModule.class})
     public interface AppComponent {
         MapScreenPresenter mapScreenPresenter();
         void inject(MapActivity ac);
