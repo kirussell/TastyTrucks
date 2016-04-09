@@ -1,5 +1,6 @@
 package com.kirussell.tastytrucks.map;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -56,7 +57,7 @@ public class MapScreenPresenter {
     }
 
     public void onAttach(MapScreenView view) {
-        this.view = view;
+        this.view = view == null ? EMPTY_VIEW : view;
         locationProvider.onStart();
         placesProvider.onStart();
         if (truckMarkerIcon == null) {
@@ -108,12 +109,14 @@ public class MapScreenPresenter {
     }
 
     private void moveTo(LatLng latLng) {
-        mapViewHandlers.truckInfoShown.set(false);
-        view.moveTo(latLng);
-        requestTrucksNear(latLng);
+        if (latLng != null) {
+            mapViewHandlers.truckInfoShown.set(false);
+            view.moveTo(latLng);
+            requestTrucksNear(latLng);
+        }
     }
 
-    public void requestTrucksNear(LatLng latLng) {
+    public void requestTrucksNear(@NonNull LatLng latLng) {
         dataService.getTrucks(latLng.latitude, latLng.longitude, SEARCH_RADIUS_METERS).enqueue(new Callback<TruckData[]>() {
             @Override
             public void onResponse(Call<TruckData[]> call, Response<TruckData[]> response) {

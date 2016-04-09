@@ -159,4 +159,11 @@ public class MapScreenPresenterTests {
         presenter.onHideMarkerInfoWindow();
         assertFalse(mapViewHandlers.truckInfoShown.get());
     }
+
+    @Test
+    public void checkNpes() {
+        presenter.onMapClicked(null);
+        presenter.onMarkerClicked(null);
+        presenter.onPlacePredictionSelected(null);
+    }
 }
