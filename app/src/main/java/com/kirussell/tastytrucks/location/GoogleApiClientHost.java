@@ -33,6 +33,9 @@ class GoogleApiClientHost implements GoogleApiClient.ConnectionCallbacks, Google
                     .addApi(Places.PLACE_DETECTION_API)
                     .build();
         }
+        if (!googleApiClient.isConnected()) {
+            googleApiClient.connect();
+        }
         return googleApiClient;
     }
 
