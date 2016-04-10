@@ -40,7 +40,7 @@ Trade-offs, left out
 - Mocking static methods from android (PowerMock, Robolectric) instead of code duplication (MyTextUtils).
 
 Links
-___
+---
 - Linkedin: https://linkedin.com/in/kirussell
 - Lib for intro Garson: https://github.com/kirussell/Garson
 - Released Apks: https://github.com/kirussell/TastyTrucks/releases
