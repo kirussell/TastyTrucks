@@ -2,4 +2,5 @@
     <string name="app_name">TastyTrucks</string>
     <string name="search_bar_hint">Enter place name to find trucks</string>
     <string name="searchbar_tip">Search places where you want to find food trucks</string>
+    <string name="my_location_tip">Choose your location to find food trucks</string>
 </resources>

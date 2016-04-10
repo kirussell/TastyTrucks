@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -146,6 +147,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             );
         } else {
             map.setMyLocationEnabled(true);
+            onMyLocationEnabled();
         }
         presenter.setInitialLocation();
         map.setOnMyLocationButtonClickListener(this);
@@ -214,9 +216,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_MY_LOCATION_PERMISSIONS) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 map.setMyLocationEnabled(true);
+                onMyLocationEnabled();
             }
         } else if (requestCode == REQUEST_INTERNET_PERMISSIONS) {
             if (permissions.length == 1 &&
@@ -225,6 +228,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 finish();
             }
         }
+    }
+
+    private void onMyLocationEnabled() {
+        intro.showMyLocationTip(
+                this, activityMapBinding.myLocationShadow,
+                ContextCompat.getDrawable(this, R.drawable.my_location_shadow),
+                getString(R.string.my_location_tip)
+        );
     }
 
     @Override

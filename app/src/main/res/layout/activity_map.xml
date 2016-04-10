@@ -22,6 +22,14 @@
             android:layout_height="match_parent"
             tools:context=".MapActivity"/>
 
+        <View
+            android:id="@+id/my_location_shadow"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@android:color/transparent"
+            android:layout_margin="12dp"
+            android:layout_gravity="right|top"/>
+
         <FrameLayout
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
