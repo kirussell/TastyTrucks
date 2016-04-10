@@ -43,7 +43,5 @@ Links
 ___
 - Linkedin: https://linkedin.com/in/kirussell
 - Lib for intro Garson: https://github.com/kirussell/Garson
-TODO
-Link to other code you're particularly proud of.
-Link to to the hosted application where applicable.
+- Released Apks: https://github.com/kirussell/TastyTrucks/releases
 
