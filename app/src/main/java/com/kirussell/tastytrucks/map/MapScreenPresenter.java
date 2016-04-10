@@ -84,7 +84,7 @@ public class MapScreenPresenter {
         moveTo(locationProvider.getLastLocation());
     }
 
-    public void onPlacePredictionSelected(PlacePrediction place) {
+    public void onPlacePredictionSelected(@NonNull PlacePrediction place) {
         final String placeId = place.getId();
         if (!TextUtils.isEmpty(placeId)) {
             executor.execute(new Runnable() {
@@ -130,7 +130,7 @@ public class MapScreenPresenter {
         });
     }
 
-    public void onMarkerClicked(TruckData truck) {
+    public void onMarkerClicked(@NonNull TruckData truck) {
         mapViewHandlers.truckInfoShown.set(true);
         mapViewHandlers.truckInfo.set(
                 spanUtil.normal(

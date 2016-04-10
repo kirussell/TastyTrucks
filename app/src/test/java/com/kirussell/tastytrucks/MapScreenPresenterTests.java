@@ -100,7 +100,7 @@ public class MapScreenPresenterTests {
     public void requestTrucksNear() throws Exception {
         LatLng loc = new LatLng(0, 0);
         presenter.requestTrucksNear(loc);
-        verify(mapScreenView, timeout(20).times(1)).displayTrucks(new TruckData[0]);
+        verify(mapScreenView, timeout(30).times(1)).displayTrucks(new TruckData[0]);
     }
 
     @Test
@@ -110,7 +110,7 @@ public class MapScreenPresenterTests {
         when(locationApi.getLastLocation()).thenReturn(loc);
         presenter.onMyLocationClicked();
         verify(mapScreenView, times(1)).moveTo(loc);
-        verify(mapScreenView, timeout(20).times(1)).displayTrucks(new TruckData[0]);
+        verify(mapScreenView, timeout(30).times(1)).displayTrucks(new TruckData[0]);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class MapScreenPresenterTests {
         LatLng loc = new LatLng(0, 0);
         presenter.onMapClicked(loc);
         verify(mapScreenView, times(1)).moveTo(loc);
-        verify(mapScreenView, timeout(20).times(1)).displayTrucks(new TruckData[0]);
+        verify(mapScreenView, timeout(30).times(1)).displayTrucks(new TruckData[0]);
     }
 
     @Test
@@ -163,7 +163,13 @@ public class MapScreenPresenterTests {
     @Test
     public void checkNpes() {
         presenter.onMapClicked(null);
-        presenter.onMarkerClicked(null);
-        presenter.onPlacePredictionSelected(null);
+        try {
+            presenter.onMarkerClicked(null);
+            assertFalse(true);
+        } catch (NullPointerException e) {}
+        try {
+            presenter.onPlacePredictionSelected(null);
+            assertFalse(true);
+        } catch (NullPointerException e) {}
     }
 }
