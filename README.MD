@@ -38,7 +38,8 @@ Trade-offs, left out
 - Currently data requested for SF, so it is better to restrict search with SF bounds or even better to create API to retrieve data for different areas.
 - Truck info card can be implemented with bottom sheets pattern.
 - Mocking static methods from android (PowerMock, Robolectric) instead of code duplication (MyTextUtils).
-
+- Also it would be great to add some crashlytics (fabric)
+  
 Links
 ---
 - Linkedin: https://linkedin.com/in/kirussell
